@@ -10,4 +10,5 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.4.5'
 
     implementation 'org.openftc:rev-extensions-2:1.2'
+    implementation 'com.github.dogecv:dogecv:2020.4-alpha'
 }
