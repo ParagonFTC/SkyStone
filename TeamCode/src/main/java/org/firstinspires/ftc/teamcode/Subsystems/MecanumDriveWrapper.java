@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.Util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.Util.LynxOptimizedI2cFactory;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.ExpansionHubServo;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -109,8 +110,14 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 
-    private ExpansionHubEx hub;
+    public static double leftHookEngagedPosition = 0.45;
+    public static double rightHookEngagedPosition = 0.6;
+    public static double leftHookDisengagedPosition = 1;
+    public static double rightHookDisengagedPosition = 0;
+
+    private ExpansionHubEx hub1, hub2;
     private ExpansionHubMotor leftFront, leftBack, rightBack, rightFront;
+    private ExpansionHubServo leftHook, rightHook;
     private List<ExpansionHubMotor> motors;
     private BNO055IMU imu;
 
@@ -130,9 +137,10 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
-        hub = hardwareMap.get(ExpansionHubEx.class, "hub");
+        hub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        hub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
-        imu = LynxOptimizedI2cFactory.createLynxEmbeddedImu(hub.getStandardModule(), 0);
+        imu = LynxOptimizedI2cFactory.createLynxEmbeddedImu(hub1.getStandardModule(), 0);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -143,6 +151,9 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
         rightBack = hardwareMap.get(ExpansionHubMotor.class, "rightBack");
         rightFront = hardwareMap.get(ExpansionHubMotor.class, "rightFront");
 
+        leftHook = hardwareMap.get(ExpansionHubServo.class, "leftHook");
+        rightHook = hardwareMap.get(ExpansionHubServo.class, "rightHook");
+
         motors = Arrays.asList(leftFront, leftBack, rightBack, rightFront);
 
         for (ExpansionHubMotor motor : motors) {
@@ -151,8 +162,8 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
         }
 
         // TODO: Find out which motors have to be reversed
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //TODO: tune velocity PID Coefficients
     }
@@ -171,16 +182,18 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-        RevBulkData bulkData = hub.getBulkInputData();
+        RevBulkData bulkData1 = hub1.getBulkInputData();
+        RevBulkData bulkData2 = hub2.getBulkInputData();
 
-        if (bulkData == null) {
+        if (bulkData1 == null || bulkData2 == null) {
             return  Arrays.asList(0.0, 0.0, 0.0, 0.0);
         }
 
         List<Double> wheelPositions = new ArrayList<>();
-        for (ExpansionHubMotor motor : motors) {
-            wheelPositions.add(encoderTicksToInches(bulkData.getMotorCurrentPosition(motor)));
-        }
+        wheelPositions.add(encoderTicksToInches(bulkData2.getMotorCurrentPosition(leftFront)));
+        wheelPositions.add(encoderTicksToInches(bulkData2.getMotorCurrentPosition(leftBack)));
+        wheelPositions.add(encoderTicksToInches(bulkData1.getMotorCurrentPosition(rightBack)));
+        wheelPositions.add(encoderTicksToInches(bulkData1.getMotorCurrentPosition(rightFront)));
         return wheelPositions;
     }
 
@@ -234,6 +247,16 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
 
     public boolean isBusy() {
         return mode != Mode.IDLE;
+    }
+
+    public void engageHooks() {
+        leftHook.setPosition(leftHookEngagedPosition);
+        rightHook.setPosition(rightHookEngagedPosition);
+    }
+
+    public void disengageHooks() {
+        leftHook.setPosition(leftHookDisengagedPosition);
+        rightHook.setPosition(rightHookDisengagedPosition);
     }
 
     @Override
