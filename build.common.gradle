@@ -36,6 +36,7 @@ android {
         noCompress "tflite"
     }
 
+    //noinspection GroovyDocCheck
     defaultConfig {
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 19

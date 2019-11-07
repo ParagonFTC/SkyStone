@@ -16,7 +16,7 @@ public class Intake implements Subsystem {
     private boolean active;
 
     public static double armPosition = 0;
-    public static double diarmPosition = 0.3;
+    public static double disarmPosition = 0.3;
     private double pusherPosition;
 
     public Intake(HardwareMap hardwareMap) {
@@ -53,7 +53,7 @@ public class Intake implements Subsystem {
     }
 
     public void disarmPusher() {
-        setPusherPosition(diarmPosition);
+        setPusherPosition(disarmPosition);
     }
 
     @Override
