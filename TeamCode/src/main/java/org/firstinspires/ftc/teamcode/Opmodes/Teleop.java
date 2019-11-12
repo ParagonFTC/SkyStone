@@ -43,6 +43,7 @@ public class Teleop extends OpMode {
         markerDeploy.setPosition(hold);
         robot.outtake.disarmWrist();
         robot.outtake.disarmGrabber();
+        robot.intake.disarmPusher();
     }
 
     @Override
@@ -55,8 +56,8 @@ public class Teleop extends OpMode {
         stickyGamepad1.update();
         if (stickyGamepad1.right_bumper) t = -t;
         if (stickyGamepad1.right_stick_button) {
-            if (Math.abs(t) == 1) t /= 2;
-            else  t *= 2;
+            if (Math.abs(t) == 1) t *= 0.3;
+            else  t *= 10.0/3;
         }
         if (gamepad1.right_stick_x != 0) robot.drive.setDrivePower(new Pose2d(0,0, Math.abs(t) * gamepad1.right_stick_x));
         else robot.drive.setDrivePower(new Pose2d(t*gamepad1.left_stick_y,t*gamepad1.left_stick_x,0));
@@ -84,6 +85,7 @@ public class Teleop extends OpMode {
         if (gamepad1.dpad_down) markerDeploy.setPosition(hold);
         if (gamepad1.dpad_up) markerDeploy.setPosition(release);
         if (gamepad2.right_bumper) robot.outtake.setWristPosition(0.5);
+        if (gamepad1.right_trigger > 0.5) robot.intake.setPusherPosition(0);
         telemetry.addData("switch mode engaged", t);
     }
 }

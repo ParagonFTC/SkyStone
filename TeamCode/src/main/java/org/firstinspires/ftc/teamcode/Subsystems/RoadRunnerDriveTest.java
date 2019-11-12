@@ -80,10 +80,19 @@ public class RoadRunnerDriveTest extends MecanumDrive {
 
     private ExpansionHubServo leftHook, rightHook;
 
-    public static double leftHookEngagedPosition = 0.45;
-    public static double rightHookEngagedPosition = 0.55;
+    public static double leftHookEngagedPosition = 0.4;
+    public static double rightHookEngagedPosition = 0.6;
     public static double leftHookDisengagedPosition = 1;
     public static double rightHookDisengagedPosition = 0;
+
+    private ExpansionHubMotor intakeLeft, intakeRight;
+    private ExpansionHubServo pusher;
+
+    public static double armPosition = 0;
+    public static double disarmPosition = 0.8;
+
+    private ExpansionHubMotor lift;
+    public static final double LIFT_TICKS_PER_REV = 537.6;
 
     public RoadRunnerDriveTest(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -131,6 +140,14 @@ public class RoadRunnerDriveTest extends MecanumDrive {
 
         leftHook = hardwareMap.get(ExpansionHubServo.class, "leftHook");
         rightHook = hardwareMap.get(ExpansionHubServo.class, "rightHook");
+
+        intakeLeft = hardwareMap.get(ExpansionHubMotor.class, "intakeLeft");
+        intakeRight = hardwareMap.get(ExpansionHubMotor.class, "intakeRight");
+        intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        pusher = hardwareMap.get(ExpansionHubServo.class, "pusher");
+
+        lift = hardwareMap.get(ExpansionHubMotor.class, "lift");
     }
 
     public TrajectoryBuilder trajectoryBuilder() {
@@ -326,5 +343,42 @@ public class RoadRunnerDriveTest extends MecanumDrive {
     public void disengageHooks() {
         leftHook.setPosition(leftHookDisengagedPosition);
         rightHook.setPosition(rightHookDisengagedPosition);
+    }
+
+    public void armPusher() {
+        pusher.setPosition(armPosition);
+    }
+
+    public void disarmPusher() {
+        pusher.setPosition(disarmPosition);
+    }
+
+    public void setPusherPosition(double position) {
+        pusher.setPosition(position);
+    }
+
+    public void setIntakePower(double power) {
+        intakeLeft.setPower(power);
+        intakeRight.setPower(power);
+    }
+
+    public void raiseLift() {
+        lift.setTargetPosition(1010);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(1);
+        while (!Thread.currentThread().isInterrupted() && lift.isBusy()) {
+            update();
+        }
+    }
+
+    public void lowerLift() {
+        lift.setTargetPosition(0);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(1);
+        /*
+        while (!Thread.currentThread().isInterrupted() && lift.isBusy()) {
+            update();
+        }
+        */
     }
 }

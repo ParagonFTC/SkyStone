@@ -15,8 +15,8 @@ public class Intake implements Subsystem {
     private double speed;
     private boolean active;
 
-    public static double armPosition = 0;
-    public static double disarmPosition = 0.3;
+    public static double armPosition = 0.4;
+    public static double disarmPosition = 0.8;
     private double pusherPosition;
 
     public Intake(HardwareMap hardwareMap) {
@@ -58,7 +58,7 @@ public class Intake implements Subsystem {
 
     @Override
     public void update() {
-        intakeLeft.setPower(speed/2);
+        intakeLeft.setPower(speed);
         intakeRight.setPower(speed);
 
         pusher.setPosition(pusherPosition);

@@ -33,8 +33,14 @@ public class Outtake implements Subsystem {
     }
 
     public void setLiftPower(double power) {
-        if (power < 0) power /= 5;
-        if (power == 0) power = 0.0;
+        //if (power < 0) power /= 2;
+        if (power == 0) {
+            lift.setTargetPosition(lift.getCurrentPosition());
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            power = 0.5;
+        } else {
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
         liftPower = power;
     }
 
