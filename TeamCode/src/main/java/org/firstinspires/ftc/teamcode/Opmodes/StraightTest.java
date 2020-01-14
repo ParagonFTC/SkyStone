@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.RoadRunnerDriveTest;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.RoadRunnerDriveTest;
 /*
  * to test if you're straight
  */
+@Disabled
 @Config
 @Autonomous(group = "drive")
 public class StraightTest extends LinearOpMode {

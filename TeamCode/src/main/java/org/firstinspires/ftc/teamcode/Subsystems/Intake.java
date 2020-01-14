@@ -10,7 +10,6 @@ import org.openftc.revextensions2.ExpansionHubServo;
 @Config
 public class Intake implements Subsystem {
     ExpansionHubMotor intakeLeft, intakeRight;
-    ExpansionHubServo pusher;
     public static double defaultSpeed = 1.0;
     private double speed;
     private boolean active;
@@ -23,8 +22,6 @@ public class Intake implements Subsystem {
         intakeLeft = hardwareMap.get(ExpansionHubMotor.class, "intakeLeft");
         intakeRight = hardwareMap.get(ExpansionHubMotor.class, "intakeRight");
         intakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        pusher = hardwareMap.get(ExpansionHubServo.class, "pusher");
     }
 
     public void setSpeed(double power) {
@@ -44,24 +41,10 @@ public class Intake implements Subsystem {
         }
     }
 
-    public void setPusherPosition(double position) {
-        pusherPosition = position;
-    }
-
-    public void armPusher() {
-        setPusherPosition(armPosition);
-    }
-
-    public void disarmPusher() {
-        setPusherPosition(disarmPosition);
-    }
-
     @Override
     public void update() {
         intakeLeft.setPower(speed);
         intakeRight.setPower(speed);
-
-        pusher.setPosition(pusherPosition);
     }
 
     @Override

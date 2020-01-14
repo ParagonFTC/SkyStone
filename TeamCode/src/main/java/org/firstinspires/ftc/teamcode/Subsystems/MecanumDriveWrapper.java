@@ -110,8 +110,8 @@ public class MecanumDriveWrapper extends MecanumDrive implements Subsystem {
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 
-    public static double leftHookEngagedPosition = 0.45;
-    public static double rightHookEngagedPosition = 0.55;
+    public static double leftHookEngagedPosition = 0.3;
+    public static double rightHookEngagedPosition = 0.7;
     public static double leftHookDisengagedPosition = 1;
     public static double rightHookDisengagedPosition = 0;
 
