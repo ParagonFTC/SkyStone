@@ -22,7 +22,8 @@ public class Outtake2 implements Subsystem {
     public static double wristDeployPosition = 0.9;
     public static double wristGrabPosition = 0.01;
     public static double wristIdlePosition = 0.15;
-    public static double wristDelay = 1.0;
+    public static double wristLiftPosition = 0.3;
+    public static double wristDelay = 0.5;
 
     ExpansionHubServo grabber;
     public static double grabberArmPosition = 1;
@@ -35,6 +36,7 @@ public class Outtake2 implements Subsystem {
 
     public enum WristPosition {
         GRAB,
+        LIFT,
         DEPLOY,
         IDLE
     }
@@ -100,24 +102,22 @@ public class Outtake2 implements Subsystem {
 
     public void raiseLift() {
         mode = Mode.RUN_TO_POSITION;
-        lift.setTargetPosition(-(liftPosition - 1) * encoderInchesToTicks(LIFT_ITERATION));
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (liftPosition != 7) lift.setTargetPosition(-(liftPosition - 1) * encoderInchesToTicks(LIFT_ITERATION));
+        if (lift.getMode() != DcMotor.RunMode.RUN_TO_POSITION) lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(1);
         liftRaised = true;
     }
 
     public void lowerLift() {
         mode = Mode.RUN_TO_POSITION;
-        if (liftRaised) {
-            lift.setTargetPosition(0);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftRaised = false;
-            lift.setPower(1);
-        }
+        lift.setTargetPosition(0);
+        if (lift.getMode() != DcMotor.RunMode.RUN_TO_POSITION)lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftRaised = false;
+        lift.setPower(1);
     }
 
     public void liftPositionUp() {
-        liftPosition ++;
+        if (liftPosition != 7) liftPosition ++;
         raiseLift();
     }
 
@@ -134,6 +134,9 @@ public class Outtake2 implements Subsystem {
                 break;
             case GRAB:
                 liftPositionUp();
+                wristPosition = WristPosition.LIFT;
+                break;
+            case LIFT:
                 wristPosition = WristPosition.DEPLOY;
                 break;
             case DEPLOY:
@@ -171,10 +174,13 @@ public class Outtake2 implements Subsystem {
                     armGrabber();
                 }
                 break;
+            case LIFT:
+                setWristPosition(wristLiftPosition);
+                raiseLift();
+                break;
             case DEPLOY:
-                if (!lift.isBusy()) {
-                    setWristPosition(wristDeployPosition);
-                }
+                if (liftPosition == 7) setWristPosition(0.7);
+                else setWristPosition(wristDeployPosition);
                 break;
         }
         if (!lift.isBusy()) mode = Mode.OPEN_LOOP;

@@ -50,6 +50,7 @@ public abstract class SkystoneAutoOpMode extends LinearOpMode {
         while (!isStarted()) {
             position = getSkystonePosition();
             telemetry.addData("Skystone Position", position);
+            telemetry.update();
         }
 
         AutoTransitioner.transitionOnStop(this, "Teleop");

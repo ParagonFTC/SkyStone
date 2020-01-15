@@ -36,8 +36,9 @@ public class DogeCVTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("FPS", String.format("%.2f", phoneCam.getFps()));
-            telemetry.addData("Position", detector.getScreenPosition());
+            telemetry.addData("Position", detector.getScreenPosition().x);
             telemetry.addData("Area",detector.foundRectangle().height * detector.foundRectangle().width);
+            telemetry.addData("Width", detector.foundRectangle().width);
             telemetry.update();
 
             sleep(10);
